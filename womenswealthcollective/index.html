@@ -47,12 +47,18 @@
     display: flex; align-items: center; gap: 16px;
   }
   .brand-mark {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: var(--brand); color: #fff;
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--brand-tint); color: var(--brand-darker);
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 16px; letter-spacing: 0.04em;
+    font-weight: 700; font-size: 18px; letter-spacing: 0.02em;
     box-shadow: var(--shadow-sm); flex-shrink: 0;
+    overflow: hidden;
   }
+  .brand-mark img {
+    width: 100%; height: 100%;
+    object-fit: contain; display: block;
+  }
+  .brand-mark .fallback { font-style: italic; }
   header .titles h1 { margin: 0 0 4px; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
   header .titles p { margin: 0; color: var(--muted); font-size: 14px; }
 
@@ -346,7 +352,11 @@
 <body>
 <div class="container">
   <header>
-    <div class="brand-mark" aria-hidden="true">wWc</div>
+    <div class="brand-mark" aria-hidden="true">
+      <img src="logo.png" alt="Women's Wealth Collective"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline';" />
+      <span class="fallback" style="display:none;">wWc</span>
+    </div>
     <div class="titles">
       <h1>Real Estate Debt Portfolio</h1>
       <p>Women's Wealth Collective &middot; lifetime interest &amp; payoff acceleration</p>
