@@ -56,6 +56,12 @@
     justify-content: center;
     box-shadow: var(--shadow-sm);
     overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  header .logo:hover {
+    transform: scale(1.04);
+    box-shadow: 0 4px 10px rgba(46, 50, 35, 0.10);
   }
   header .logo img {
     width: 100%;
@@ -307,11 +313,11 @@
 <body>
 <div class="container">
   <header>
-    <div class="logo" aria-hidden="true">
-      <img src="logo.png" alt="Women's Wealth Collective"
+    <a href="index.html" class="logo" aria-label="Back to all calculators">
+      <img src="logo-wwc-300-round.png" alt="Women's Wealth Collective"
            onerror="this.style.display='none';this.nextElementSibling.style.display='inline';" />
       <span class="fallback" style="display:none;">wWc</span>
-    </div>
+    </a>
     <div class="titles">
       <h1>Loan Calculator</h1>
       <p>Women's Wealth Collective &middot; monthly payment, total interest, and full amortization</p>
