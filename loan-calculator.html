@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Loan Calculator</title>
+<style>
+  :root {
+    --bg: #F8F7F1;
+    --surface: #ffffff;
+    --text: #2C2E26;
+    --muted: #76796B;
+    --border: #E5E3D8;
+    --row-alt: #FAF9F4;
+    --primary: #9BA77E;
+    --primary-dark: #7C8862;
+    --primary-darker: #5E6849;
+    --primary-tint: #EEF1E6;
+    --primary-tint-strong: #DDE3CC;
+    --accent: #5E6849;
+    --soft: #F1EFE7;
+
+    --shadow-sm: 0 1px 2px rgba(46, 50, 35, 0.05), 0 1px 3px rgba(46, 50, 35, 0.06);
+    --shadow-md: 0 4px 10px rgba(46, 50, 35, 0.05), 0 14px 30px rgba(46, 50, 35, 0.08);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 1080px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  header {
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  header .logo {
+    width: 76px;
+    height: 76px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--primary-tint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  header .logo:hover {
+    transform: scale(1.04);
+    box-shadow: 0 4px 10px rgba(46, 50, 35, 0.10);
+  }
+  header .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  header .logo .fallback {
+    color: var(--primary-darker);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    font-style: italic;
+  }
+  header .titles { min-width: 0; }
+  header h1 {
+    margin: 0 0 4px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+  header p {
+    margin: 0; color: var(--muted); font-size: 15px;
+  }
+  @media (max-width: 480px) {
+    header .logo { width: 60px; height: 60px; }
+    header h1 { font-size: 22px; }
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    margin-bottom: 22px;
+  }
+
+  .card h2 {
+    margin: 0 0 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.01em;
+  }
+
+  /* Form grid */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+  .input-wrap .prefix,
+  .input-wrap .suffix {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .input-wrap .prefix { left: 14px; }
+  .input-wrap .suffix { right: 14px; }
+  .input-wrap.has-prefix input { padding-left: 28px; }
+  .input-wrap.has-suffix input { padding-right: 32px; }
+
+  input[type="number"],
+  input[type="date"] {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    font-variant-numeric: tabular-nums;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(155, 167, 126, 0.20);
+  }
+
+  .actions {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  button.btn {
+    padding: 12px 22px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.15s, transform 0.05s;
+  }
+  button.btn:hover { background: var(--primary-dark); }
+  button.btn:active { transform: scale(0.99); }
+  button.btn.ghost {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+  button.btn.ghost:hover { background: var(--soft); }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  .stat {
+    padding: 18px 20px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .stat.primary {
+    background: linear-gradient(135deg, var(--primary-tint) 0%, var(--primary-tint-strong) 100%);
+    border-color: var(--primary-tint-strong);
+  }
+  .stat .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .stat.primary .label { color: var(--primary-dark); }
+  .stat .value {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+  .stat .sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Schedule table */
+  .schedule-meta {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .schedule-wrapper {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .schedule-scroll {
+    max-height: 520px;
+    overflow: auto;
+  }
+  table.schedule {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 640px;
+  }
+  table.schedule thead th {
+    position: sticky;
+    top: 0;
+    background: var(--soft);
+    text-align: right;
+    padding: 11px 14px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    z-index: 1;
+  }
+  table.schedule thead th:first-child,
+  table.schedule tbody td:first-child { text-align: left; }
+  table.schedule tbody td {
+    padding: 10px 14px;
+    text-align: right;
+    border-bottom: 1px solid #EEF1F7;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  table.schedule tbody tr:nth-child(even) { background: var(--row-alt); }
+  table.schedule tbody tr:hover { background: var(--primary-tint); }
+  table.schedule tbody tr:last-child td { border-bottom: none; }
+
+  /* Year boundary */
+  table.schedule tbody tr.year-end td {
+    border-bottom: 2px solid var(--border);
+  }
+
+  .empty {
+    padding: 40px 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .error {
+    background: #FFE8E0;
+    color: #8A3920;
+    border: 1px solid #F5C9B8;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .error.show { display: block; }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .container { padding: 20px 14px 40px; }
+    header h1 { font-size: 22px; }
+    .card { padding: 18px; }
+    .stat .value { font-size: 20px; }
+    table.schedule { min-width: 580px; font-size: 13px; }
+    table.schedule thead th,
+    table.schedule tbody td { padding: 9px 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <a href="index.html" class="logo" aria-label="Back to all calculators">
+      <img src="logo-wwc-300-round.png" alt="Women's Wealth Collective"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline';" />
+      <span class="fallback" style="display:none;">wWc</span>
+    </a>
+    <div class="titles">
+      <h1>Loan Calculator</h1>
+      <p>Women's Wealth Collective &middot; monthly payment, total interest, and full amortization</p>
+    </div>
+  </header>
+
+  <div id="error" class="error" role="alert"></div>
+
+  <!-- INPUTS -->
+  <section class="card" aria-labelledby="inputs-title">
+    <h2 id="inputs-title">Loan details</h2>
+    <div class="form-grid">
+      <div class="field">
+        <label for="amount">Loan amount</label>
+        <div class="input-wrap has-prefix">
+          <span class="prefix">$</span>
+          <input type="number" id="amount" inputmode="decimal" min="0" step="1000" value="350000" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="rate">Interest rate</label>
+        <div class="input-wrap has-suffix">
+          <input type="number" id="rate" inputmode="decimal" min="0" step="0.001" value="6.5" />
+          <span class="suffix">%</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="term">Term</label>
+        <div class="input-wrap has-suffix">
+          <input type="number" id="term" inputmode="numeric" min="1" max="50" step="1" value="30" />
+          <span class="suffix">years</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="start">Start date</label>
+        <input type="date" id="start" />
+      </div>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn" id="calc-btn">Calculate</button>
+      <button type="button" class="btn ghost" id="reset-btn">Reset</button>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="card" aria-labelledby="results-title">
+    <h2 id="results-title">Summary</h2>
+    <div class="stats">
+      <div class="stat primary">
+        <div class="label">Monthly payment</div>
+        <div class="value" id="monthly">—</div>
+        <div class="sub" id="monthly-sub">Principal &amp; interest</div>
+      </div>
+      <div class="stat">
+        <div class="label">Total interest</div>
+        <div class="value" id="total-interest">—</div>
+        <div class="sub" id="interest-sub">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Total paid</div>
+        <div class="value" id="total-paid">—</div>
+        <div class="sub" id="paid-sub">Principal + interest</div>
+      </div>
+      <div class="stat">
+        <div class="label">Payoff date</div>
+        <div class="value" id="payoff-date">—</div>
+        <div class="sub" id="payoff-sub">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section class="card" aria-labelledby="schedule-title">
+    <h2 id="schedule-title">Amortization schedule</h2>
+    <div class="schedule-meta" id="schedule-meta">—</div>
+    <div class="schedule-wrapper">
+      <div class="schedule-scroll">
+        <table class="schedule">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Payment</th>
+              <th>Principal</th>
+              <th>Interest</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody id="schedule-body">
+            <tr><td colspan="6" class="empty">Enter loan details and click Calculate.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ---------- formatters ---------- */
+const fmtCurrency = new Intl.NumberFormat('en-US', {
+  style: 'currency', currency: 'USD',
+  minimumFractionDigits: 2, maximumFractionDigits: 2,
+});
+const fmtCurrency0 = new Intl.NumberFormat('en-US', {
+  style: 'currency', currency: 'USD', maximumFractionDigits: 0,
+});
+const fmtMonthYear = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' });
+const fmtFullDate = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+const errorEl = document.getElementById('error');
+
+/* ---------- defaults ---------- */
+const DEFAULTS = {
+  amount: 350000,
+  rate: 6.5,
+  term: 30,
+};
+
+function todayISO() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
+}
+
+function parseISODate(s) {
+  // Treat input as local date (avoid UTC shift)
+  if (!s) return null;
+  const parts = s.split('-');
+  if (parts.length !== 3) return null;
+  const [y, m, d] = parts.map(n => parseInt(n, 10));
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d);
+}
+
+function addMonths(date, months) {
+  const d = new Date(date.getFullYear(), date.getMonth() + months, 1);
+  // Preserve day-of-month when possible (cap at end of target month)
+  const targetDay = date.getDate();
+  const lastDayOfTarget = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  d.setDate(Math.min(targetDay, lastDayOfTarget));
+  return d;
+}
+
+/* ---------- calculation ---------- */
+function calculate({ amount, rate, term, startDate }) {
+  const n = Math.round(term * 12);
+  const r = rate / 100 / 12;
+
+  let monthly;
+  if (r === 0) {
+    monthly = amount / n;
+  } else {
+    monthly = (amount * r) / (1 - Math.pow(1 + r, -n));
+  }
+
+  let balance = amount;
+  let totalInterest = 0;
+  const schedule = [];
+
+  for (let i = 1; i <= n; i++) {
+    const interest = balance * r;
+    let principal = monthly - interest;
+
+    // Final payment correction (cents drift)
+    if (i === n) {
+      principal = balance;
+    }
+    if (principal > balance) principal = balance;
+
+    const payment = principal + interest;
+    balance -= principal;
+    if (balance < 0) balance = 0;
+    totalInterest += interest;
+
+    schedule.push({
+      i,
+      date: addMonths(startDate, i - 1),
+      payment,
+      principal,
+      interest,
+      balance,
+    });
+  }
+
+  const lastDate = schedule.length ? schedule[schedule.length - 1].date : startDate;
+
+  return {
+    monthly,
+    totalInterest,
+    totalPaid: amount + totalInterest,
+    schedule,
+    payoffDate: lastDate,
+    months: n,
+  };
+}
+
+/* ---------- render ---------- */
+function setText(id, txt) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = txt;
+}
+
+function fmtTermYears(months) {
+  const y = Math.floor(months / 12);
+  const m = months % 12;
+  const parts = [];
+  if (y) parts.push(y + (y === 1 ? ' year' : ' years'));
+  if (m) parts.push(m + (m === 1 ? ' month' : ' months'));
+  return parts.join(', ') || '0 months';
+}
+
+function renderResults(amount, result) {
+  setText('monthly', fmtCurrency.format(result.monthly));
+  setText('total-interest', fmtCurrency0.format(result.totalInterest));
+  setText('total-paid', fmtCurrency0.format(result.totalPaid));
+  setText('payoff-date', fmtMonthYear.format(result.payoffDate));
+
+  const interestPct = amount > 0 ? (result.totalInterest / amount * 100) : 0;
+  setText('interest-sub', interestPct.toFixed(1) + '% of principal');
+  setText('payoff-sub', fmtTermYears(result.months));
+
+  const meta = document.getElementById('schedule-meta');
+  meta.textContent =
+    result.schedule.length + ' payments · ' +
+    fmtFullDate.format(result.schedule[0].date) + ' → ' +
+    fmtFullDate.format(result.schedule[result.schedule.length - 1].date);
+
+  const body = document.getElementById('schedule-body');
+  body.innerHTML = result.schedule.map(p => {
+    const isYearEnd = p.i % 12 === 0 && p.i !== result.schedule.length;
+    return (
+      '<tr' + (isYearEnd ? ' class="year-end"' : '') + '>' +
+        '<td>' + p.i + '</td>' +
+        '<td>' + fmtMonthYear.format(p.date) + '</td>' +
+        '<td>' + fmtCurrency.format(p.payment) + '</td>' +
+        '<td>' + fmtCurrency.format(p.principal) + '</td>' +
+        '<td>' + fmtCurrency.format(p.interest) + '</td>' +
+        '<td>' + fmtCurrency.format(p.balance) + '</td>' +
+      '</tr>'
+    );
+  }).join('');
+}
+
+/* ---------- run ---------- */
+function showError(msg) { errorEl.textContent = msg; errorEl.classList.add('show'); }
+function clearError() { errorEl.textContent = ''; errorEl.classList.remove('show'); }
+
+function calculateAll() {
+  try {
+    clearError();
+    const amount = parseFloat(document.getElementById('amount').value);
+    const rate = parseFloat(document.getElementById('rate').value);
+    const term = parseFloat(document.getElementById('term').value);
+    const startDate = parseISODate(document.getElementById('start').value);
+
+    if (!isFinite(amount) || amount <= 0) throw new Error('Enter a loan amount greater than 0.');
+    if (!isFinite(rate) || rate < 0) throw new Error('Enter a valid interest rate (0 or greater).');
+    if (!isFinite(term) || term <= 0) throw new Error('Enter a term greater than 0 years.');
+    if (term > 50) throw new Error('Term must be 50 years or less.');
+    if (!startDate || isNaN(startDate.getTime())) throw new Error('Choose a valid start date.');
+
+    const result = calculate({ amount, rate, term, startDate });
+    renderResults(amount, result);
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+function reset() {
+  document.getElementById('amount').value = DEFAULTS.amount;
+  document.getElementById('rate').value = DEFAULTS.rate;
+  document.getElementById('term').value = DEFAULTS.term;
+  document.getElementById('start').value = todayISO();
+  calculateAll();
+}
+
+document.getElementById('calc-btn').addEventListener('click', calculateAll);
+document.getElementById('reset-btn').addEventListener('click', reset);
+
+['amount', 'rate', 'term', 'start'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') calculateAll();
+  });
+});
+
+/* ---------- init ---------- */
+document.getElementById('start').value = todayISO();
+calculateAll();
+</script>
+</body>
+</html>

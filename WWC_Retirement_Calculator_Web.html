@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 Retirement Plan Calculator | Women's Wealth Collective</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #1F3A2E;
+    --forest-soft: #2A4A3D;
+    --sage: #7A9E7E;
+    --sage-light: #B8CDB9;
+    --sage-mist: #E6EDE5;
+    --gold: #B8860B;
+    --gold-light: #D4A849;
+    --gold-soft: #EBD9A8;
+    --ivory: #FAF8F2;
+    --cream: #F5F1E8;
+    --charcoal: #2C2C2C;
+    --muted: #6B6B6B;
+    --line: #D9D4C7;
+    --white: #FFFFFF;
+    --rust: #A0522D;
+
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Jost', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--charcoal);
+    background: var(--ivory);
+    line-height: 1.6;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .wwc-calc {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    background: var(--ivory);
+  }
+
+  /* Header */
+  .wwc-calc__header {
+    text-align: center;
+    padding: 24px 0 48px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 56px;
+  }
+  .wwc-calc__eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .wwc-calc__title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(34px, 5vw, 52px);
+    line-height: 1.1;
+    color: var(--forest);
+    margin-bottom: 16px;
+  }
+  .wwc-calc__title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .wwc-calc__subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--muted);
+    max-width: 580px;
+    margin: 0 auto;
+  }
+  .wwc-calc__rule {
+    display: block;
+    width: 48px;
+    height: 1px;
+    background: var(--gold);
+    margin: 24px auto 0;
+  }
+
+  /* Progress bar */
+  .wwc-progress {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 40px;
+    align-items: center;
+  }
+  .wwc-progress__step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .wwc-progress__dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.3s ease;
+  }
+  .wwc-progress__dot.is-active {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: var(--gold-light);
+  }
+  .wwc-progress__dot.is-done {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: var(--white);
+  }
+  .wwc-progress__label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .wwc-progress__line {
+    width: 32px;
+    height: 1px;
+    background: var(--line);
+  }
+  @media (max-width: 640px) {
+    .wwc-progress__label { display: none; }
+    .wwc-progress__line { width: 20px; }
+  }
+
+  /* Step card */
+  .wwc-step {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 48px;
+    border-radius: 2px;
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .wwc-step.is-active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 640px) {
+    .wwc-step { padding: 32px 24px; }
+  }
+
+  .wwc-step__num {
+    font-family: var(--font-body);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .wwc-step__title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 1.15;
+    color: var(--forest);
+    margin-bottom: 12px;
+  }
+  .wwc-step__lede {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--muted);
+    margin-bottom: 40px;
+  }
+
+  /* Form fields */
+  .wwc-field {
+    margin-bottom: 28px;
+  }
+  .wwc-field__label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--forest);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .wwc-field__hint {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .wwc-input, .wwc-select {
+    width: 100%;
+    padding: 14px 16px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--charcoal);
+    background: var(--ivory);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    transition: all 0.2s ease;
+    font-weight: 400;
+  }
+  .wwc-input:focus, .wwc-select:focus {
+    outline: none;
+    border-color: var(--sage);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(122, 158, 126, 0.12);
+  }
+  .wwc-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237A9E7E' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 44px;
+    cursor: pointer;
+  }
+  .wwc-input--currency {
+    padding-left: 32px;
+    background-image: linear-gradient(90deg, transparent 0, transparent 14px, var(--gold) 14px, var(--gold) 22px, transparent 22px);
+    background-position: 0 center;
+    background-repeat: no-repeat;
+    background-size: 22px 16px;
+    background-image: none;
+  }
+  .wwc-input-wrap {
+    position: relative;
+  }
+  .wwc-input-wrap__prefix {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-weight: 500;
+    pointer-events: none;
+    font-size: 16px;
+  }
+  .wwc-input-wrap .wwc-input--currency {
+    padding-left: 32px;
+  }
+
+  /* Radio group as cards */
+  .wwc-radio-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .wwc-radio {
+    position: relative;
+    cursor: pointer;
+  }
+  .wwc-radio input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .wwc-radio__card {
+    padding: 16px 14px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--ivory);
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+  .wwc-radio__title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--forest);
+    margin-bottom: 4px;
+  }
+  .wwc-radio__sub {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+  .wwc-radio:hover .wwc-radio__card {
+    border-color: var(--sage);
+    background: var(--white);
+  }
+  .wwc-radio input:checked + .wwc-radio__card {
+    border-color: var(--forest);
+    background: var(--forest);
+  }
+  .wwc-radio input:checked + .wwc-radio__card .wwc-radio__title {
+    color: var(--white);
+  }
+  .wwc-radio input:checked + .wwc-radio__card .wwc-radio__sub {
+    color: var(--gold-soft);
+  }
+
+  .wwc-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 640px) {
+    .wwc-row { grid-template-columns: 1fr; }
+  }
+
+  /* Buttons */
+  .wwc-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .wwc-btn {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    border-radius: 2px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .wwc-btn--primary {
+    background: var(--forest);
+    color: var(--white);
+    border: 1px solid var(--forest);
+  }
+  .wwc-btn--primary:hover {
+    background: var(--forest-soft);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(31, 58, 46, 0.18);
+  }
+  .wwc-btn--ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--line);
+  }
+  .wwc-btn--ghost:hover {
+    color: var(--forest);
+    border-color: var(--forest);
+  }
+  .wwc-btn--gold {
+    background: var(--gold);
+    color: var(--white);
+    border: 1px solid var(--gold);
+  }
+  .wwc-btn--gold:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(184, 134, 11, 0.25);
+  }
+
+  /* Results screen */
+  .wwc-results {
+    display: none;
+    animation: fadeIn 0.6s ease;
+  }
+  .wwc-results.is-active { display: block; }
+
+  .wwc-headline {
+    background: var(--forest);
+    color: var(--white);
+    padding: 56px 48px;
+    border-radius: 2px;
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .wwc-headline::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 80px; height: 3px;
+    background: var(--gold);
+  }
+  .wwc-headline__eyebrow {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .wwc-headline__plan {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 28px;
+    color: var(--sage-light);
+    margin-bottom: 8px;
+  }
+  .wwc-headline__plan strong {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--white);
+  }
+  .wwc-headline__rule {
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+    margin: 24px auto;
+  }
+  .wwc-headline__stat-label {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .wwc-headline__stat {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(56px, 9vw, 88px);
+    line-height: 1;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .wwc-headline__stat-sub {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--sage-light);
+  }
+
+  /* Breakdown */
+  .wwc-breakdown {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 40px;
+    margin-bottom: 32px;
+    border-radius: 2px;
+  }
+  @media (max-width: 640px) {
+    .wwc-breakdown { padding: 24px; }
+    .wwc-headline { padding: 40px 24px; }
+  }
+  .wwc-breakdown__title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--forest);
+    margin-bottom: 28px;
+  }
+  .wwc-breakdown__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px dotted var(--line);
+    gap: 16px;
+  }
+  .wwc-breakdown__row:last-child {
+    border-bottom: none;
+  }
+  .wwc-breakdown__label {
+    font-size: 15px;
+    color: var(--charcoal);
+    flex: 1;
+  }
+  .wwc-breakdown__sublabel {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--muted);
+    display: block;
+    margin-top: 2px;
+  }
+  .wwc-breakdown__value {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--forest);
+    white-space: nowrap;
+  }
+  .wwc-breakdown__total {
+    background: var(--sage-mist);
+    margin: 16px -40px -40px;
+    padding: 24px 40px;
+    border-top: 2px solid var(--sage);
+  }
+  @media (max-width: 640px) {
+    .wwc-breakdown__total { margin: 16px -24px -24px; padding: 20px 24px; }
+  }
+  .wwc-breakdown__total .wwc-breakdown__label {
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--forest);
+  }
+  .wwc-breakdown__total .wwc-breakdown__value {
+    font-size: 32px;
+    color: var(--gold);
+  }
+
+  /* Comparison table */
+  .wwc-compare {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 40px;
+    margin-bottom: 32px;
+    border-radius: 2px;
+  }
+  @media (max-width: 640px) {
+    .wwc-compare { padding: 24px; }
+  }
+  .wwc-compare__title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--forest);
+    margin-bottom: 8px;
+  }
+  .wwc-compare__sub {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .wwc-plan {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 16px;
+    align-items: center;
+    padding: 16px 20px;
+    border: 1px solid var(--line);
+    margin-bottom: 10px;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+    background: var(--ivory);
+  }
+  .wwc-plan.is-best {
+    background: var(--white);
+    border-color: var(--gold);
+    border-width: 1px;
+    box-shadow: 0 2px 8px rgba(184, 134, 11, 0.1);
+    position: relative;
+  }
+  .wwc-plan.is-best::before {
+    content: 'RECOMMENDED';
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: var(--gold);
+    color: var(--white);
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+  .wwc-plan__name {
+    font-weight: 500;
+    color: var(--forest);
+    font-size: 15px;
+  }
+  .wwc-plan__detail {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--muted);
+    display: block;
+    margin-top: 2px;
+    font-weight: 400;
+  }
+  .wwc-plan__contrib {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--forest);
+    text-align: right;
+  }
+  .wwc-plan__contrib-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 2px;
+    font-family: var(--font-body);
+    font-style: normal;
+    font-weight: 500;
+  }
+  .wwc-plan__savings {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--gold);
+    text-align: right;
+  }
+  @media (max-width: 640px) {
+    .wwc-plan {
+      grid-template-columns: 1fr 1fr;
+    }
+    .wwc-plan__name {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* SECURE 2.0 panel */
+  .wwc-secure {
+    background: linear-gradient(135deg, var(--cream) 0%, var(--sage-mist) 100%);
+    border: 1px solid var(--line);
+    padding: 32px;
+    margin-bottom: 32px;
+    border-radius: 2px;
+    border-left: 4px solid var(--gold);
+  }
+  .wwc-secure__title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--forest);
+    margin-bottom: 8px;
+  }
+  .wwc-secure__sub {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .wwc-secure__rules {
+    display: grid;
+    gap: 14px;
+  }
+  .wwc-secure__rule {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding-bottom: 14px;
+    border-bottom: 1px dotted var(--line);
+  }
+  .wwc-secure__rule:last-child { border-bottom: none; padding-bottom: 0; }
+  .wwc-secure__rule-label {
+    font-size: 13px;
+    color: var(--muted);
+    min-width: 180px;
+    flex-shrink: 0;
+  }
+  .wwc-secure__rule-value {
+    font-size: 14px;
+    color: var(--forest);
+    font-weight: 500;
+  }
+  .wwc-secure__rule-value--warning {
+    color: var(--gold);
+  }
+  .wwc-secure__rule-value--blocked {
+    color: var(--rust);
+  }
+  @media (max-width: 640px) {
+    .wwc-secure__rule { flex-direction: column; gap: 4px; }
+    .wwc-secure__rule-label { min-width: 0; }
+  }
+
+  /* Email capture */
+  .wwc-capture {
+    background: var(--forest);
+    color: var(--white);
+    padding: 48px;
+    border-radius: 2px;
+    margin-bottom: 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .wwc-capture::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    width: 80px; height: 2px;
+    background: var(--gold);
+    transform: translateX(-50%);
+  }
+  @media (max-width: 640px) {
+    .wwc-capture { padding: 32px 24px; }
+  }
+  .wwc-capture__eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .wwc-capture__title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(28px, 4vw, 36px);
+    color: var(--white);
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .wwc-capture__title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+  .wwc-capture__lede {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--sage-light);
+    max-width: 480px;
+    margin: 0 auto 32px;
+    line-height: 1.5;
+  }
+  .wwc-capture__form {
+    display: flex;
+    gap: 10px;
+    max-width: 460px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+  .wwc-capture__input {
+    flex: 1;
+    min-width: 200px;
+    padding: 14px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 15px;
+    border-radius: 2px;
+  }
+  .wwc-capture__input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+  .wwc-capture__input:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .wwc-capture__btn {
+    background: var(--gold);
+    color: var(--white);
+    border: 1px solid var(--gold);
+    padding: 14px 28px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+  }
+  .wwc-capture__btn:hover {
+    background: var(--gold-light);
+    border-color: var(--gold-light);
+  }
+  .wwc-capture__note {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--sage-light);
+    margin-top: 16px;
+    opacity: 0.8;
+  }
+  .wwc-capture--success {
+    background: var(--sage);
+  }
+  .wwc-capture--success .wwc-capture__title em { color: var(--gold-soft); }
+
+  /* Disclaimer */
+  .wwc-disclaimer {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    padding: 24px 28px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    border-radius: 2px;
+    font-family: var(--font-display);
+    font-style: italic;
+  }
+  .wwc-disclaimer strong {
+    color: var(--forest);
+    font-style: normal;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* Action buttons on results */
+  .wwc-results-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  /* Error message */
+  .wwc-error {
+    color: var(--rust);
+    font-size: 13px;
+    margin-top: 6px;
+    display: none;
+    font-family: var(--font-display);
+    font-style: italic;
+  }
+  .wwc-error.is-visible { display: block; }
+</style>
+</head>
+<body>
+<div class="wwc-calc">
+
+  <!-- HEADER -->
+  <header class="wwc-calc__header">
+    <div class="wwc-calc__eyebrow">Women's Wealth Collective</div>
+    <h1 class="wwc-calc__title">2026 Retirement Plan <em>Calculator</em></h1>
+    <p class="wwc-calc__subtitle">For small business owners. See how much you can shelter — and how much you'd save in tax — across all five plan types.</p>
+    <span class="wwc-calc__rule"></span>
+  </header>
+
+  <!-- PROGRESS -->
+  <div class="wwc-progress" id="progress">
+    <div class="wwc-progress__step">
+      <div class="wwc-progress__dot is-active" data-step="1">1</div>
+      <span class="wwc-progress__label">Business</span>
+    </div>
+    <div class="wwc-progress__line"></div>
+    <div class="wwc-progress__step">
+      <div class="wwc-progress__dot" data-step="2">2</div>
+      <span class="wwc-progress__label">Income</span>
+    </div>
+    <div class="wwc-progress__line"></div>
+    <div class="wwc-progress__step">
+      <div class="wwc-progress__dot" data-step="3">3</div>
+      <span class="wwc-progress__label">You</span>
+    </div>
+    <div class="wwc-progress__line"></div>
+    <div class="wwc-progress__step">
+      <div class="wwc-progress__dot" data-step="4">4</div>
+      <span class="wwc-progress__label">Results</span>
+    </div>
+  </div>
+
+  <!-- STEP 1: Business -->
+  <section class="wwc-step is-active" id="step-1">
+    <div class="wwc-step__num">Step 01 of 03</div>
+    <h2 class="wwc-step__title">Tell us about your business.</h2>
+    <p class="wwc-step__lede">The structure shapes which plans you can choose — and how your contribution math works.</p>
+
+    <div class="wwc-field">
+      <label class="wwc-field__label">Business structure</label>
+      <div class="wwc-radio-group">
+        <label class="wwc-radio">
+          <input type="radio" name="entity" value="scorp" checked>
+          <div class="wwc-radio__card">
+            <div class="wwc-radio__title">S-Corporation</div>
+            <div class="wwc-radio__sub">You take W-2 wages from your business</div>
+          </div>
+        </label>
+        <label class="wwc-radio">
+          <input type="radio" name="entity" value="schc">
+          <div class="wwc-radio__card">
+            <div class="wwc-radio__title">Sole Prop / LLC</div>
+            <div class="wwc-radio__sub">Schedule C filer; no W-2</div>
+          </div>
+        </label>
+        <label class="wwc-radio">
+          <input type="radio" name="entity" value="partnership">
+          <div class="wwc-radio__card">
+            <div class="wwc-radio__title">Partnership</div>
+            <div class="wwc-radio__sub">Multi-member LLC or partnership</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="wwc-field">
+      <label class="wwc-field__label">Do you have any W-2 employees?</label>
+      <div class="wwc-radio-group">
+        <label class="wwc-radio">
+          <input type="radio" name="employees" value="none" checked>
+          <div class="wwc-radio__card">
+            <div class="wwc-radio__title">Just me</div>
+            <div class="wwc-radio__sub">(spouse on payroll is fine)</div>
+          </div>
+        </label>
+        <label class="wwc-radio">
+          <input type="radio" name="employees" value="some">
+          <div class="wwc-radio__card">
+            <div class="wwc-radio__title">Yes, I do</div>
+            <div class="wwc-radio__sub">Limits Solo 401(k) eligibility</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="wwc-actions">
+      <span></span>
+      <button class="wwc-btn wwc-btn--primary" onclick="nextStep(1)">Continue →</button>
+    </div>
+  </section>
+
+  <!-- STEP 2: Income -->
+  <section class="wwc-step" id="step-2">
+    <div class="wwc-step__num">Step 02 of 03</div>
+    <h2 class="wwc-step__title">Your income.</h2>
+    <p class="wwc-step__lede" id="incomeStepLede">For S-corp owners, what matters for the math is your W-2 wages.</p>
+
+    <div class="wwc-field" id="wageField">
+      <label class="wwc-field__label" id="wageLabel">W-2 wages you pay yourself in 2026</label>
+      <div class="wwc-input-wrap">
+        <span class="wwc-input-wrap__prefix">$</span>
+        <input type="text" class="wwc-input wwc-input--currency" id="wage" placeholder="120,000" inputmode="numeric">
+      </div>
+      <div class="wwc-field__hint" id="wageHint">Use only the W-2 reasonable compensation you take. Distributions don't count for retirement contributions.</div>
+      <div class="wwc-error" id="wageError">Please enter a valid amount.</div>
+    </div>
+
+    <div class="wwc-field">
+      <label class="wwc-field__label">Filing status</label>
+      <select class="wwc-select" id="filing">
+        <option value="single">Single</option>
+        <option value="mfj" selected>Married Filing Jointly</option>
+        <option value="hoh">Head of Household</option>
+        <option value="mfs">Married Filing Separately</option>
+      </select>
+    </div>
+
+    <div class="wwc-field">
+      <label class="wwc-field__label">Estimated household taxable income (after deductions)</label>
+      <div class="wwc-input-wrap">
+        <span class="wwc-input-wrap__prefix">$</span>
+        <input type="text" class="wwc-input wwc-input--currency" id="taxable" placeholder="280,000" inputmode="numeric">
+      </div>
+      <div class="wwc-field__hint">Used to estimate your federal marginal bracket. If you don't know, a rough guess is fine.</div>
+    </div>
+
+    <div class="wwc-field">
+      <label class="wwc-field__label">State (for state tax estimate)</label>
+      <select class="wwc-select" id="state">
+        <option value="0">No state income tax</option>
+        <option value="0.0495">Illinois (4.95%)</option>
+        <option value="0.0525">North Carolina (4.5%)</option>
+        <option value="0.0613">Maryland (5.75%)</option>
+        <option value="0.0685">New York (6.85%)</option>
+        <option value="0.093">California (9.3%)</option>
+        <option value="0.0307">Pennsylvania (3.07%)</option>
+        <option value="0.04">Other state (~4% avg)</option>
+      </select>
+      <div class="wwc-field__hint">Rough estimate only. Actual state savings depend on your full state return.</div>
+    </div>
+
+    <div class="wwc-actions">
+      <button class="wwc-btn wwc-btn--ghost" onclick="prevStep(2)">← Back</button>
+      <button class="wwc-btn wwc-btn--primary" onclick="nextStep(2)">Continue →</button>
+    </div>
+  </section>
+
+  <!-- STEP 3: You -->
+  <section class="wwc-step" id="step-3">
+    <div class="wwc-step__num">Step 03 of 03</div>
+    <h2 class="wwc-step__title">A bit about you.</h2>
+    <p class="wwc-step__lede">Age affects your catch-up eligibility — and the 60–63 super catch-up could add thousands more.</p>
+
+    <div class="wwc-field">
+      <label class="wwc-field__label">Your age in 2026</label>
+      <input type="number" class="wwc-input" id="age" placeholder="48" min="18" max="99">
+      <div class="wwc-field__hint">Age 50+ unlocks catch-up contributions. Ages 60–63 get the SECURE 2.0 super catch-up.</div>
+      <div class="wwc-error" id="ageError">Please enter a valid age.</div>
+    </div>
+
+    <div class="wwc-field">
+      <label class="wwc-field__label">Tax strategy preference</label>
+      <div class="wwc-radio-group">
+        <label class="wwc-radio">
+          <input type="radio" name="taxPref" value="traditional" checked>
+          <div class="wwc-radio__card">
+            <div class="wwc-radio__title">Save tax now</div>
+            <div class="wwc-radio__sub">Traditional (deduct today, pay tax later)</div>
+          </div>
+        </label>
+        <label class="wwc-radio">
+          <input type="radio" name="taxPref" value="roth">
+          <div class="wwc-radio__card">
+            <div class="wwc-radio__title">Tax-free later</div>
+            <div class="wwc-radio__sub">Roth (pay tax today, free in retirement)</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="wwc-actions">
+      <button class="wwc-btn wwc-btn--ghost" onclick="prevStep(3)">← Back</button>
+      <button class="wwc-btn wwc-btn--gold" onclick="calculate()">Calculate My Results →</button>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="wwc-results" id="results">
+
+    <!-- Hero stat -->
+    <div class="wwc-headline">
+      <div class="wwc-headline__eyebrow">Your Recommended Plan</div>
+      <div class="wwc-headline__plan">The <strong id="bestPlan">Solo 401(k)</strong></div>
+      <div class="wwc-headline__rule"></div>
+      <div class="wwc-headline__stat-label">Estimated 2026 Tax Savings</div>
+      <div class="wwc-headline__stat" id="topSavings">$0</div>
+      <div class="wwc-headline__stat-sub" id="topSavingsSub">Federal + state, at your marginal rate</div>
+    </div>
+
+    <!-- Breakdown of recommended plan -->
+    <div class="wwc-breakdown" id="breakdownPanel">
+      <h3 class="wwc-breakdown__title" id="breakdownTitle">How the contribution breaks down</h3>
+      <div id="breakdownRows"></div>
+    </div>
+
+    <!-- Comparison of all plans -->
+    <div class="wwc-compare">
+      <h3 class="wwc-compare__title">All five plans, compared</h3>
+      <p class="wwc-compare__sub">Maximum contribution and estimated tax savings for each plan, based on your inputs.</p>
+      <div id="planList"></div>
+    </div>
+
+    <!-- SECURE 2.0 -->
+    <div class="wwc-secure" id="securePanel">
+      <h3 class="wwc-secure__title">SECURE 2.0: Your Setup Window</h3>
+      <p class="wwc-secure__sub" id="secureSub">When you can establish a Solo 401(k) and still capture 2026 contributions.</p>
+      <div class="wwc-secure__rules" id="secureRules"></div>
+    </div>
+
+    <!-- Email capture (soft gate) -->
+    <div class="wwc-capture" id="captureCard">
+      <div class="wwc-capture__eyebrow">Personalized Walkthrough</div>
+      <h3 class="wwc-capture__title">Want Dimpy to walk you through <em>your numbers?</em></h3>
+      <p class="wwc-capture__lede">Drop your email below and we'll send a personalized summary plus an invitation to a 30-minute strategy conversation — no obligation.</p>
+      <form class="wwc-capture__form" id="captureForm">
+        <input type="email" class="wwc-capture__input" id="email" placeholder="your@email.com" required>
+        <button type="submit" class="wwc-capture__btn">Send My Summary</button>
+      </form>
+      <p class="wwc-capture__note">We don't share emails. Ever.</p>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="wwc-disclaimer">
+      <strong>Important</strong>
+      This is an estimate for planning purposes. The figures assume 2026 IRS contribution limits per Notice 2025-67 and use simplified marginal-rate math. Your actual tax savings depend on your full federal and state return, including deductions, credits, AMT, SE tax adjustments, and any phaseouts. Sole-prop contribution math is approximated using the standard ~20% net-SE-earnings convention; precise numbers require a circular calculation. SECURE 2.0 § 317 deadlines reference the IRS Issue Snapshot on 401(k) plan timing. This tool does not constitute personalized tax, legal, or investment advice. Talk with a qualified tax professional before making contribution decisions.
+    </div>
+
+    <div class="wwc-results-actions">
+      <button class="wwc-btn wwc-btn--ghost" onclick="restart()">← Start over</button>
+    </div>
+  </section>
+</div>
+
+<script>
+  // ===========================================================
+  // 2026 LIMITS (per IRS Notice 2025-67)
+  // ===========================================================
+  const LIMITS_2026 = {
+    k401_employee: 24500,
+    k401_catchup_50: 8000,
+    k401_catchup_6063: 11250,
+    k401_total: 72000,
+    sep_max: 72000,
+    simple_employee: 17000,
+    simple_catchup_50: 4000,
+    simple_catchup_6063: 5250,
+    ira_max: 7500,
+    ira_catchup_50: 1100,
+    comp_limit: 360000,
+    sep_min_pct_threshold: 750,
+  };
+
+  // 2026 Federal MFJ brackets (per IRS bracket PDF)
+  // For simplified marginal calc — we use taxable income to determine bracket
+  const BRACKETS_2026_MFJ = [
+    { upTo: 24800, rate: 0.10 },
+    { upTo: 100800, rate: 0.12 },
+    { upTo: 211400, rate: 0.22 },
+    { upTo: 403550, rate: 0.24 },
+    { upTo: 512450, rate: 0.32 },
+    { upTo: 768700, rate: 0.35 },
+    { upTo: Infinity, rate: 0.37 },
+  ];
+  const BRACKETS_2026_SINGLE = [
+    { upTo: 12400, rate: 0.10 },
+    { upTo: 50400, rate: 0.12 },
+    { upTo: 105700, rate: 0.22 },
+    { upTo: 201775, rate: 0.24 },
+    { upTo: 256225, rate: 0.32 },
+    { upTo: 640600, rate: 0.35 },
+    { upTo: Infinity, rate: 0.37 },
+  ];
+  const BRACKETS_2026_HOH = [
+    { upTo: 17700, rate: 0.10 },
+    { upTo: 67450, rate: 0.12 },
+    { upTo: 105700, rate: 0.22 },
+    { upTo: 201750, rate: 0.24 },
+    { upTo: 256200, rate: 0.32 },
+    { upTo: 640600, rate: 0.35 },
+    { upTo: Infinity, rate: 0.37 },
+  ];
+
+  const state = {
+    step: 1,
+    entity: 'scorp',
+    employees: 'none',
+    wage: 0,
+    filing: 'mfj',
+    taxable: 0,
+    stateRate: 0,
+    age: 0,
+    taxPref: 'traditional',
+  };
+
+  // ===========================================================
+  // NAVIGATION
+  // ===========================================================
+  function nextStep(current) {
+    if (!validateStep(current)) return;
+    captureStep(current);
+    showStep(current + 1);
+    if (current === 1) updateStep2Labels();
+  }
+  function prevStep(current) {
+    showStep(current - 1);
+  }
+  function showStep(n) {
+    document.querySelectorAll('.wwc-step').forEach(el => el.classList.remove('is-active'));
+    document.getElementById('step-' + n).classList.add('is-active');
+    state.step = n;
+    updateProgress(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function updateProgress(active) {
+    document.querySelectorAll('.wwc-progress__dot').forEach(dot => {
+      const step = parseInt(dot.dataset.step);
+      dot.classList.remove('is-active', 'is-done');
+      if (step < active) dot.classList.add('is-done');
+      else if (step === active) dot.classList.add('is-active');
+    });
+  }
+  function restart() {
+    document.getElementById('results').classList.remove('is-active');
+    document.querySelectorAll('.wwc-step').forEach(el => el.classList.remove('is-active'));
+    document.getElementById('step-1').classList.add('is-active');
+    updateProgress(1);
+    state.step = 1;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateStep2Labels() {
+    const entity = document.querySelector('input[name="entity"]:checked').value;
+    const lede = document.getElementById('incomeStepLede');
+    const wageLabel = document.getElementById('wageLabel');
+    const wageHint = document.getElementById('wageHint');
+    if (entity === 'scorp') {
+      lede.textContent = 'For S-corp owners, what matters for the math is your W-2 wages.';
+      wageLabel.textContent = 'W-2 wages you pay yourself in 2026';
+      wageHint.textContent = 'Use only the W-2 reasonable compensation you take. Distributions don\u2019t count for retirement contributions.';
+    } else if (entity === 'schc') {
+      lede.textContent = 'For sole props and single-member LLCs, what matters is your net Schedule C income.';
+      wageLabel.textContent = 'Net Schedule C earnings (after expenses)';
+      wageHint.textContent = 'Use your net earnings from self-employment before the half-SE-tax deduction.';
+    } else {
+      lede.textContent = 'For partnerships, use your guaranteed payments + share of partnership income.';
+      wageLabel.textContent = 'Net self-employment income';
+      wageHint.textContent = 'Your share of partnership net earnings subject to SE tax.';
+    }
+  }
+
+  // ===========================================================
+  // VALIDATION & CAPTURE
+  // ===========================================================
+  function validateStep(n) {
+    if (n === 2) {
+      const wage = parseCurrency(document.getElementById('wage').value);
+      const err = document.getElementById('wageError');
+      if (!wage || wage < 1) {
+        err.classList.add('is-visible');
+        return false;
+      }
+      err.classList.remove('is-visible');
+    }
+    if (n === 3) {
+      const age = parseInt(document.getElementById('age').value);
+      const err = document.getElementById('ageError');
+      if (!age || age < 18 || age > 99) {
+        err.classList.add('is-visible');
+        return false;
+      }
+      err.classList.remove('is-visible');
+    }
+    return true;
+  }
+  function captureStep(n) {
+    if (n === 1) {
+      state.entity = document.querySelector('input[name="entity"]:checked').value;
+      state.employees = document.querySelector('input[name="employees"]:checked').value;
+    } else if (n === 2) {
+      state.wage = parseCurrency(document.getElementById('wage').value);
+      state.filing = document.getElementById('filing').value;
+      state.taxable = parseCurrency(document.getElementById('taxable').value) || state.wage * 1.5;
+      state.stateRate = parseFloat(document.getElementById('state').value) || 0;
+    } else if (n === 3) {
+      state.age = parseInt(document.getElementById('age').value);
+      state.taxPref = document.querySelector('input[name="taxPref"]:checked').value;
+    }
+  }
+  function parseCurrency(str) {
+    if (!str) return 0;
+    return parseFloat(String(str).replace(/[^0-9.]/g, '')) || 0;
+  }
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  // Currency input auto-format
+  ['wage', 'taxable'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', e => {
+      const cleaned = e.target.value.replace(/[^0-9]/g, '');
+      if (cleaned) {
+        e.target.value = parseInt(cleaned).toLocaleString('en-US');
+      } else {
+        e.target.value = '';
+      }
+    });
+  });
+
+  // ===========================================================
+  // MARGINAL RATE LOOKUP
+  // ===========================================================
+  function getMarginalRate(taxable, filing) {
+    let brackets = BRACKETS_2026_MFJ;
+    if (filing === 'single' || filing === 'mfs') brackets = BRACKETS_2026_SINGLE;
+    else if (filing === 'hoh') brackets = BRACKETS_2026_HOH;
+    for (const b of brackets) {
+      if (taxable <= b.upTo) return b.rate;
+    }
+    return 0.37;
+  }
+
+  // ===========================================================
+  // CONTRIBUTION CALCULATIONS
+  // ===========================================================
+  // Returns: { contribution: $, breakdown: [{label, sub, value}] }
+
+  function calcSolo401k() {
+    const { entity, employees, wage, age } = state;
+    if (employees === 'some') {
+      return { eligible: false, reason: 'Not available with W-2 employees (other than spouse).' };
+    }
+
+    let employeeDeferral = 0;
+    let employerContrib = 0;
+    let catchup = 0;
+    const breakdown = [];
+
+    if (entity === 'scorp') {
+      // Employee deferral: up to limit, capped at W-2 wages
+      employeeDeferral = Math.min(LIMITS_2026.k401_employee, wage);
+      // Employer: 25% of W-2 wages
+      employerContrib = Math.min(Math.floor(wage * 0.25), LIMITS_2026.k401_total - employeeDeferral);
+      breakdown.push({
+        label: 'Employee deferral',
+        sub: '2026 cap of $24,500 (or W-2 wages, whichever is less)',
+        value: employeeDeferral,
+      });
+      breakdown.push({
+        label: 'Employer profit-sharing',
+        sub: '25% of W-2 wages, capped at $72,000 total',
+        value: employerContrib,
+      });
+    } else {
+      // Sch C / partnership: approximate using ~20% of net SE earnings convention
+      employeeDeferral = Math.min(LIMITS_2026.k401_employee, wage);
+      // Approximate "compensation" after half SE tax adjustment
+      const approxComp = wage * 0.9235 * 0.5 + wage * 0.9235 * 0.5; // simplified
+      const adjustedComp = wage - (wage * 0.0765); // approx half SE tax
+      employerContrib = Math.min(Math.floor(adjustedComp * 0.20), LIMITS_2026.k401_total - employeeDeferral);
+      breakdown.push({
+        label: 'Employee deferral',
+        sub: '2026 cap of $24,500 (or net SE earnings, whichever is less)',
+        value: employeeDeferral,
+      });
+      breakdown.push({
+        label: 'Employer profit-sharing',
+        sub: 'Approx. 20% of net SE earnings (after half SE tax)',
+        value: employerContrib,
+      });
+    }
+
+    // Catch-up
+    if (age >= 60 && age <= 63) {
+      catchup = LIMITS_2026.k401_catchup_6063;
+      breakdown.push({
+        label: 'Super catch-up (age 60-63)',
+        sub: 'SECURE 2.0 enhanced catch-up',
+        value: catchup,
+      });
+    } else if (age >= 50) {
+      catchup = LIMITS_2026.k401_catchup_50;
+      breakdown.push({
+        label: 'Catch-up contribution (age 50+)',
+        sub: 'Additional $8,000 allowed',
+        value: catchup,
+      });
+    }
+
+    const total = employeeDeferral + employerContrib + catchup;
+    return { eligible: true, contribution: total, breakdown, name: 'Solo 401(k)', detail: 'Maximum flexibility · Loans · Roth option' };
+  }
+
+  function calcSEP() {
+    const { entity, wage, age } = state;
+    let contribution = 0;
+    const breakdown = [];
+
+    if (entity === 'scorp') {
+      contribution = Math.min(Math.floor(wage * 0.25), LIMITS_2026.sep_max);
+      breakdown.push({
+        label: 'Employer contribution',
+        sub: '25% of W-2 wages, capped at $72,000',
+        value: contribution,
+      });
+    } else {
+      const adjustedComp = wage - (wage * 0.0765);
+      contribution = Math.min(Math.floor(adjustedComp * 0.20), LIMITS_2026.sep_max);
+      breakdown.push({
+        label: 'Employer contribution',
+        sub: 'Approx. 20% of net SE earnings (after half SE tax)',
+        value: contribution,
+      });
+    }
+
+    return { eligible: true, contribution, breakdown, name: 'SEP IRA', detail: 'Simplest setup · Employer-only · No loans' };
+  }
+
+  function calcSIMPLE() {
+    const { wage, age } = state;
+    const employeeDeferral = Math.min(LIMITS_2026.simple_employee, wage);
+    // Employer match: assume the standard 3% match formula
+    const match = Math.min(Math.floor(wage * 0.03), employeeDeferral);
+    let catchup = 0;
+    const breakdown = [];
+
+    breakdown.push({
+      label: 'Employee deferral',
+      sub: '2026 cap of $17,000',
+      value: employeeDeferral,
+    });
+    breakdown.push({
+      label: 'Employer match (3% formula)',
+      sub: 'Required match up to 3% of compensation',
+      value: match,
+    });
+
+    if (age >= 60 && age <= 63) {
+      catchup = 5250;
+      breakdown.push({ label: 'Super catch-up (age 60-63)', sub: 'SECURE 2.0 enhanced', value: catchup });
+    } else if (age >= 50) {
+      catchup = LIMITS_2026.simple_catchup_50;
+      breakdown.push({ label: 'Catch-up (age 50+)', sub: 'Additional $4,000', value: catchup });
+    }
+
+    const total = employeeDeferral + match + catchup;
+    return { eligible: true, contribution: total, breakdown, name: 'SIMPLE IRA', detail: 'Lower limits · Easier admin · No loans' };
+  }
+
+  function calcTradIRA() {
+    const { age } = state;
+    let contribution = LIMITS_2026.ira_max;
+    let catchup = 0;
+    const breakdown = [{
+      label: 'Annual IRA contribution',
+      sub: '2026 limit for all IRAs (combined)',
+      value: contribution,
+    }];
+    if (age >= 50) {
+      catchup = LIMITS_2026.ira_catchup_50;
+      breakdown.push({ label: 'Catch-up (age 50+)', sub: 'Additional $1,100', value: catchup });
+    }
+    return { eligible: true, contribution: contribution + catchup, breakdown, name: 'Traditional IRA', detail: 'Personal — not business-based' };
+  }
+
+  function calcRothIRA() {
+    const r = calcTradIRA();
+    r.name = 'Roth IRA';
+    r.detail = 'Tax-free growth · Income limits apply';
+    // Note: We're not modeling MAGI phaseouts here — just showing the max
+    return r;
+  }
+
+  // ===========================================================
+  // MAIN CALCULATE
+  // ===========================================================
+  function calculate() {
+    if (!validateStep(3)) return;
+    captureStep(3);
+
+    const marginal = getMarginalRate(state.taxable, state.filing);
+    const totalRate = marginal + state.stateRate;
+
+    const plans = [
+      calcSolo401k(),
+      calcSEP(),
+      calcSIMPLE(),
+      calcTradIRA(),
+      calcRothIRA(),
+    ];
+
+    plans.forEach(p => {
+      if (p.eligible) {
+        // Roth: no current-year deduction
+        const deductible = (p.name === 'Roth IRA' || state.taxPref === 'roth' && p.name === 'Traditional IRA') ? 0 : p.contribution;
+        p.taxSavings = Math.round(deductible * totalRate);
+        p.deductible = deductible;
+      } else {
+        p.taxSavings = 0;
+        p.deductible = 0;
+      }
+    });
+
+    // Find best (highest deductible savings; Roth IRA included but typically lower)
+    const eligible = plans.filter(p => p.eligible);
+    const best = eligible.reduce((a, b) => (b.taxSavings > a.taxSavings ? b : a));
+
+    renderResults(plans, best, marginal, totalRate);
+    document.querySelectorAll('.wwc-step').forEach(el => el.classList.remove('is-active'));
+    document.getElementById('results').classList.add('is-active');
+    updateProgress(4);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ===========================================================
+  // RENDER RESULTS
+  // ===========================================================
+  function renderResults(plans, best, marginal, totalRate) {
+    document.getElementById('bestPlan').textContent = best.name;
+    document.getElementById('topSavings').textContent = fmt(best.taxSavings);
+
+    const stateStr = state.stateRate > 0 ? ' + ' + (state.stateRate * 100).toFixed(1) + '% state' : '';
+    document.getElementById('topSavingsSub').textContent =
+      'At ' + (marginal * 100).toFixed(0) + '% federal' + stateStr + ' on ' + fmt(best.deductible) + ' of deductible contributions';
+
+    // Breakdown
+    document.getElementById('breakdownTitle').textContent = 'How your ' + best.name + ' contribution breaks down';
+    const rowsEl = document.getElementById('breakdownRows');
+    rowsEl.innerHTML = '';
+    best.breakdown.forEach(row => {
+      const div = document.createElement('div');
+      div.className = 'wwc-breakdown__row';
+      div.innerHTML = `
+        <div class="wwc-breakdown__label">
+          ${row.label}
+          <span class="wwc-breakdown__sublabel">${row.sub}</span>
+        </div>
+        <div class="wwc-breakdown__value">${fmt(row.value)}</div>
+      `;
+      rowsEl.appendChild(div);
+    });
+    const totalDiv = document.createElement('div');
+    totalDiv.className = 'wwc-breakdown__total wwc-breakdown__row';
+    totalDiv.innerHTML = `
+      <div class="wwc-breakdown__label">Total annual contribution</div>
+      <div class="wwc-breakdown__value">${fmt(best.contribution)}</div>
+    `;
+    rowsEl.appendChild(totalDiv);
+
+    // Comparison list
+    const listEl = document.getElementById('planList');
+    listEl.innerHTML = '';
+    plans.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'wwc-plan' + (p === best ? ' is-best' : '');
+      if (!p.eligible) {
+        div.innerHTML = `
+          <div>
+            <div class="wwc-plan__name">${p.name || 'Solo 401(k)'}</div>
+            <span class="wwc-plan__detail">${p.reason || 'Not available'}</span>
+          </div>
+          <div class="wwc-plan__contrib" style="color: var(--muted);">—</div>
+          <div class="wwc-plan__savings" style="color: var(--muted);">—</div>
+        `;
+      } else {
+        div.innerHTML = `
+          <div>
+            <div class="wwc-plan__name">${p.name}</div>
+            <span class="wwc-plan__detail">${p.detail}</span>
+          </div>
+          <div class="wwc-plan__contrib">
+            <span class="wwc-plan__contrib-label">Contribution</span>
+            ${fmt(p.contribution)}
+          </div>
+          <div class="wwc-plan__savings">
+            <span class="wwc-plan__contrib-label">Tax savings</span>
+            ${fmt(p.taxSavings)}
+          </div>
+        `;
+      }
+      listEl.appendChild(div);
+    });
+
+    // SECURE 2.0 panel
+    renderSecure();
+  }
+
+  function renderSecure() {
+    const isSchc = state.entity === 'schc';
+    const isScorp = state.entity === 'scorp';
+    const sub = document.getElementById('secureSub');
+    const rules = document.getElementById('secureRules');
+
+    if (isSchc) {
+      sub.textContent = 'As a Schedule C / sole proprietor, you have flexible setup windows under SECURE 2.0 § 317.';
+      rules.innerHTML = `
+        <div class="wwc-secure__rule">
+          <span class="wwc-secure__rule-label">Plan adoption</span>
+          <span class="wwc-secure__rule-value">Tax filing deadline + extensions</span>
+        </div>
+        <div class="wwc-secure__rule">
+          <span class="wwc-secure__rule-label">Employer profit-sharing</span>
+          <span class="wwc-secure__rule-value">Tax filing deadline + extensions</span>
+        </div>
+        <div class="wwc-secure__rule">
+          <span class="wwc-secure__rule-label">Employee deferrals (1st yr only)</span>
+          <span class="wwc-secure__rule-value wwc-secure__rule-value--warning">Tax filing deadline — NO extensions</span>
+        </div>
+      `;
+    } else if (isScorp) {
+      sub.textContent = 'As an S-corporation owner, retroactive setup is more limited under SECURE 2.0 § 317.';
+      rules.innerHTML = `
+        <div class="wwc-secure__rule">
+          <span class="wwc-secure__rule-label">Plan adoption</span>
+          <span class="wwc-secure__rule-value">Tax filing deadline + extensions</span>
+        </div>
+        <div class="wwc-secure__rule">
+          <span class="wwc-secure__rule-label">Employer profit-sharing</span>
+          <span class="wwc-secure__rule-value">Tax filing deadline + extensions</span>
+        </div>
+        <div class="wwc-secure__rule">
+          <span class="wwc-secure__rule-label">Employee deferrals (retroactive)</span>
+          <span class="wwc-secure__rule-value wwc-secure__rule-value--blocked">Not allowed — must come from W-2 payroll during the year</span>
+        </div>
+      `;
+    } else {
+      sub.textContent = 'For partnerships, retroactive setup rules generally follow the entity-level filing deadline.';
+      rules.innerHTML = `
+        <div class="wwc-secure__rule">
+          <span class="wwc-secure__rule-label">Plan adoption</span>
+          <span class="wwc-secure__rule-value">Partnership tax filing deadline + extensions</span>
+        </div>
+        <div class="wwc-secure__rule">
+          <span class="wwc-secure__rule-label">Employer profit-sharing</span>
+          <span class="wwc-secure__rule-value">Partnership tax filing deadline + extensions</span>
+        </div>
+        <div class="wwc-secure__rule">
+          <span class="wwc-secure__rule-label">Employee deferrals</span>
+          <span class="wwc-secure__rule-value wwc-secure__rule-value--warning">Specific rules vary — consult your tax advisor</span>
+        </div>
+      `;
+    }
+  }
+
+  // ===========================================================
+  // EMAIL CAPTURE
+  // ===========================================================
+  document.getElementById('captureForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    if (!email || !email.includes('@')) return;
+
+    // Build mailto with results
+    const subject = encodeURIComponent('Retirement Calculator Results — Personalized Walkthrough Request');
+    const body = encodeURIComponent(
+      `Hi Dimpy,\n\nI used the retirement plan calculator and would love a walkthrough of my results.\n\n` +
+      `My email: ${email}\n\n` +
+      `My results:\n` +
+      `- Business: ${state.entity === 'scorp' ? 'S-corp' : state.entity === 'schc' ? 'Sole Prop/LLC' : 'Partnership'}\n` +
+      `- ${state.entity === 'scorp' ? 'W-2 wages' : 'Net SE income'}: ${fmt(state.wage)}\n` +
+      `- Age: ${state.age}\n` +
+      `- Recommended plan: ${document.getElementById('bestPlan').textContent}\n` +
+      `- Estimated tax savings: ${document.getElementById('topSavings').textContent}\n\n` +
+      `Please reach out at your convenience.\n\nThank you!`
+    );
+    window.location.href = `mailto:dimpy.gulati@womenswealthcollective360.com?subject=${subject}&body=${body}`;
+
+    // Show success state
+    const card = document.getElementById('captureCard');
+    card.classList.add('wwc-capture--success');
+    card.innerHTML = `
+      <div class="wwc-capture__eyebrow">Thank You</div>
+      <h3 class="wwc-capture__title">Your email is <em>on its way.</em></h3>
+      <p class="wwc-capture__lede">A draft email has opened in your mail app — just click send and Dimpy will follow up within one business day. If nothing opened, email her directly at dimpy.gulati@womenswealthcollective360.com.</p>
+    `;
+  });
+
+  // Initial setup
+  updateProgress(1);
+</script>
+</body>
+</html>
