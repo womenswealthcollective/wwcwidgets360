@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reasonable Compensation Estimator | Women's Wealth Collective</title>
+<meta name="description" content="Estimate reasonable compensation for S-corporation officers — for planning purposes only." />
+<style>
+  :root {
+    --bg: #F8F7F1;
+    --surface: #ffffff;
+    --text: #2C2E26;
+    --muted: #76796B;
+    --border: #E5E3D8;
+    --row-alt: #FAF9F4;
+    --primary: #9BA77E;
+    --primary-dark: #7C8862;
+    --primary-darker: #5E6849;
+    --primary-tint: #EEF1E6;
+    --primary-tint-strong: #DDE3CC;
+    --accent: #5E6849;
+    --soft: #F1EFE7;
+    --highlight: #FFF8E8;
+    --highlight-border: #E8DDB8;
+    --highlight-text: #8a6d2c;
+
+    --shadow-sm: 0 1px 2px rgba(46,50,35,0.05), 0 1px 3px rgba(46,50,35,0.06);
+    --shadow-md: 0 4px 10px rgba(46,50,35,0.05), 0 14px 30px rgba(46,50,35,0.08);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 1080px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  /* Header */
+  header {
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  header .logo {
+    width: 76px; height: 76px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--primary-tint);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  header .logo:hover { transform: scale(1.04); box-shadow: 0 4px 10px rgba(46,50,35,0.10); }
+  header .logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  header .logo .fallback {
+    color: var(--primary-darker);
+    font-weight: 700; font-size: 22px;
+    letter-spacing: 0.02em; font-style: italic;
+  }
+  header .titles { min-width: 0; }
+  header h1 {
+    margin: 0 0 4px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+  header p { margin: 0; color: var(--muted); font-size: 15px; }
+  @media (max-width: 480px) {
+    header .logo { width: 60px; height: 60px; }
+    header h1 { font-size: 22px; }
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    margin-bottom: 22px;
+  }
+  .card h2 {
+    margin: 0 0 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.01em;
+  }
+  .card-subhead {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 18px 0 10px;
+  }
+  .card-subhead:first-child { margin-top: 0; }
+
+  /* Form */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .field .hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .input-wrap { position: relative; }
+  .input-wrap .suffix {
+    position: absolute;
+    top: 50%; right: 14px;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .input-wrap.has-suffix input { padding-right: 60px; }
+
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    font-variant-numeric: tabular-nums;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  select {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%2376796B' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(155,167,126,0.20);
+  }
+
+  /* Buttons */
+  .actions {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  button.btn {
+    padding: 12px 22px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.15s, transform 0.05s;
+  }
+  button.btn:hover { background: var(--primary-dark); }
+  button.btn:active { transform: scale(0.99); }
+  button.btn.ghost {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+  button.btn.ghost:hover { background: var(--soft); }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-bottom: 0;
+  }
+  .stat {
+    padding: 22px 24px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    text-align: center;
+    position: relative;
+  }
+  .stat.median {
+    background: linear-gradient(135deg, var(--highlight) 0%, #F5F0DA 100%);
+    border-color: var(--highlight-border);
+    box-shadow: 0 4px 12px rgba(232, 221, 184, 0.4);
+    transform: translateY(-4px);
+  }
+  .stat.median .badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--highlight-text);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .stat .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .stat.median .label { color: var(--highlight-text); }
+  .stat .value {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+  .stat.median .value { color: var(--highlight-text); font-size: 32px; }
+  .stat .sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* Factor breakdown table */
+  .factor-wrap { overflow-x: auto; }
+  table.factors {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 460px;
+  }
+  table.factors thead th {
+    background: var(--soft);
+    text-align: right;
+    padding: 11px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  table.factors thead th:first-child { text-align: left; }
+  table.factors tbody td {
+    padding: 11px 14px;
+    border-bottom: 1px solid #F1EFE7;
+    font-variant-numeric: tabular-nums;
+    vertical-align: top;
+  }
+  table.factors tbody td:first-child { text-align: left; color: var(--text); }
+  table.factors tbody td:nth-child(2),
+  table.factors tbody td:nth-child(3) { text-align: right; }
+  table.factors tbody td .factor-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  table.factors tbody tr.result td {
+    background: var(--primary-tint);
+    font-weight: 700;
+    color: var(--primary-darker);
+    border-top: 2px solid var(--primary-tint-strong);
+    border-bottom: none;
+    font-size: 15px;
+  }
+
+  /* Approach cards */
+  .approach-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+  .approach {
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--row-alt);
+  }
+  .approach .num {
+    display: inline-flex;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--primary-tint);
+    color: var(--primary-darker);
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .approach.used {
+    background: var(--primary-tint);
+    border-color: var(--primary-tint-strong);
+  }
+  .approach.used .num {
+    background: var(--primary);
+    color: #fff;
+  }
+  .approach .title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .approach .used-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #fff;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .approach .desc {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  /* Documentation list */
+  .doc-list {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 720px) {
+    .doc-list { grid-template-columns: 1fr 1fr; }
+  }
+  .doc-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    background: var(--row-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+  .doc-item .check {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--primary-tint);
+    color: var(--primary-darker);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .doc-item .doc-text {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .doc-item .doc-title {
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+  .doc-item .doc-detail {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    background: var(--highlight);
+    border-left: 4px solid var(--highlight-text);
+    padding: 14px 16px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 13.5px;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .disclaimer strong { color: var(--highlight-text); }
+
+  /* Driver insight */
+  .driver {
+    background: var(--primary-tint);
+    border-left: 4px solid var(--primary);
+    padding: 14px 16px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 14px;
+    color: var(--text);
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+  .driver strong { color: var(--primary-darker); }
+
+  /* Error */
+  .error {
+    background: #FFE8E0;
+    color: #8A3920;
+    border: 1px solid #F5C9B8;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .error.show { display: block; }
+
+  /* Range bar */
+  .range-bar-wrap { margin-top: 16px; }
+  .range-track {
+    position: relative;
+    height: 14px;
+    background: var(--soft);
+    border-radius: 999px;
+    box-shadow: inset 0 1px 2px rgba(46,50,35,0.06);
+  }
+  .range-fill {
+    position: absolute;
+    top: 0; bottom: 0; left: 15%; right: 15%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--highlight-text) 50%, var(--primary) 100%);
+    border-radius: 999px;
+  }
+  .range-marker {
+    position: absolute;
+    top: -6px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--highlight-text);
+    box-shadow: 0 2px 6px rgba(46,50,35,0.18);
+    left: 50%;
+    margin-left: -13px;
+  }
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 22px 14px 40px; }
+    .card { padding: 18px; }
+    .stat .value { font-size: 22px; }
+    .stat.median .value { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <a href="index.html" class="logo" aria-label="Back to all calculators">
+      <img src="logo-wwc-300-round.png" alt="Women's Wealth Collective"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline';" />
+      <span class="fallback" style="display:none;">wWc</span>
+    </a>
+    <div class="titles">
+      <h1>Reasonable Compensation Estimator</h1>
+      <p>Women's Wealth Collective &middot; planning tool for S-corporation officers</p>
+    </div>
+  </header>
+
+  <div id="error" class="error" role="alert"></div>
+
+  <!-- INPUTS -->
+  <section class="card" aria-labelledby="inputs-title">
+    <h2 id="inputs-title">About you and your role</h2>
+
+    <div class="card-subhead">Role &amp; industry</div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="role">Officer role</label>
+        <select id="role">
+          <option value="ceo">CEO / President</option>
+          <option value="cfo">CFO / Finance Director</option>
+          <option value="ops">Operations Manager</option>
+          <option value="sales">Sales Manager</option>
+          <option value="consultant">Consultant</option>
+          <option value="professional">Professional Services (Attorney / CPA / etc.)</option>
+          <option value="trade">Skilled Trade</option>
+          <option value="other">Other / General Officer</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="industry">Industry</label>
+        <select id="industry">
+          <option value="tech">Technology / Software</option>
+          <option value="finance">Finance / Banking</option>
+          <option value="professional">Legal / Accounting / Consulting</option>
+          <option value="healthcare">Healthcare / Medical</option>
+          <option value="realestate">Real Estate</option>
+          <option value="manufacturing" selected>Manufacturing</option>
+          <option value="construction">Construction / Trades</option>
+          <option value="retail">Retail / Hospitality</option>
+          <option value="nonprofit">Non-profit / Education</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card-subhead">Location</div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="state">State</label>
+        <select id="state"></select>
+      </div>
+      <div class="field">
+        <label for="areaType">Area type</label>
+        <select id="areaType">
+          <option value="major">Major Metropolitan Area</option>
+          <option value="midsize" selected>Mid-Size City</option>
+          <option value="rural">Small Town / Rural</option>
+        </select>
+        <div class="hint">Major = NYC, SF, LA, Chicago, Boston, etc.</div>
+      </div>
+      <div class="field">
+        <label for="locationLabel">Metro area or ZIP <span style="text-transform:none;font-weight:400;">(optional)</span></label>
+        <input type="text" id="locationLabel" placeholder="e.g. Seattle or 98101" />
+        <div class="hint">For your reference — not used in calculation</div>
+      </div>
+    </div>
+
+    <div class="card-subhead">Time &amp; experience</div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="experience">Years of experience</label>
+        <div class="input-wrap has-suffix">
+          <input type="number" id="experience" min="0" max="60" step="1" value="10" />
+          <span class="suffix">years</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="hours">Hours devoted per week</label>
+        <div class="input-wrap has-suffix">
+          <input type="number" id="hours" min="0" max="80" step="1" value="40" />
+          <span class="suffix">hrs/wk</span>
+        </div>
+        <div class="hint">Average over the year, including admin work</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn" id="calc-btn">Calculate range</button>
+      <button type="button" class="btn ghost" id="reset-btn">Reset</button>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="card" aria-labelledby="results-title">
+    <h2 id="results-title">Your reasonable compensation range</h2>
+    <div class="disclaimer">
+      <strong>Planning purposes only.</strong> This is a heuristic estimate based on role, geography, experience, and hours — not a salary survey or appraisal. Actual reasonable compensation depends on the specific facts and circumstances of your business. For audit defense, obtain formal documentation through a qualified tax professional or independent valuation specialist.
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="label">Low end</div>
+        <div class="value" id="lowVal">—</div>
+        <div class="sub">25th-percentile comparable</div>
+      </div>
+      <div class="stat median">
+        <span class="badge">Recommended</span>
+        <div class="label">Median estimate</div>
+        <div class="value" id="medVal">—</div>
+        <div class="sub" id="medSub">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">High end</div>
+        <div class="value" id="highVal">—</div>
+        <div class="sub">75th-percentile comparable</div>
+      </div>
+    </div>
+
+    <div class="range-bar-wrap" aria-hidden="true">
+      <div class="range-track">
+        <div class="range-fill"></div>
+        <div class="range-marker"></div>
+      </div>
+      <div class="range-labels">
+        <span id="rangeLow">—</span>
+        <span id="rangeHigh">—</span>
+      </div>
+    </div>
+
+    <div class="driver" id="driverInsight"></div>
+  </section>
+
+  <!-- FACTOR BREAKDOWN -->
+  <section class="card" aria-labelledby="factors-title">
+    <h2 id="factors-title">How the median was built</h2>
+    <div class="factor-wrap">
+      <table class="factors">
+        <thead>
+          <tr>
+            <th>Factor</th>
+            <th>Multiplier</th>
+            <th>Running median</th>
+          </tr>
+        </thead>
+        <tbody id="factors-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- IRS METHODOLOGY -->
+  <section class="card" aria-labelledby="methodology-title">
+    <h2 id="methodology-title">The three IRS-recognized approaches</h2>
+    <p style="font-size:14px;color:var(--muted);margin-top:0;margin-bottom:16px;line-height:1.55;">
+      Courts and the IRS generally evaluate reasonable compensation using one or more of these approaches. This tool primarily uses the <strong style="color:var(--primary-darker);">Market Approach</strong>, with a Cost Approach overlay (hours and role-replacement logic).
+    </p>
+    <div class="approach-grid">
+      <div class="approach">
+        <div class="num">1</div>
+        <div class="title">Cost Approach <span class="used-badge">Partial</span></div>
+        <div class="desc">
+          What would the business have to pay to <em>replace</em> the officer with someone of comparable skill? Looks at the cost of hiring out each function the officer performs (management, sales, technical work, admin). Often used for hands-on owners who wear many hats.
+        </div>
+      </div>
+      <div class="approach used">
+        <div class="num">2</div>
+        <div class="title">Market Approach <span class="used-badge">Primary</span></div>
+        <div class="desc">
+          Comparable salaries for similar roles in similar companies in similar geographic areas. Uses BLS data, salary surveys (Robert Half, Salary.com, RC Reports), and benchmarks for industry, region, and experience level. <strong>This is the most common approach in IRS audits and the one this tool is built around.</strong>
+        </div>
+      </div>
+      <div class="approach">
+        <div class="num">3</div>
+        <div class="title">Income Approach</div>
+        <div class="desc">
+          Compensation calculated as a share of the value the officer creates — typically based on business profits, return on investment to the shareholder, or revenue produced. Useful for businesses with intangible-asset-driven profits. Requires deeper financial analysis than this tool models.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOCUMENTATION -->
+  <section class="card" aria-labelledby="docs-title">
+    <h2 id="docs-title">Documentation to keep — for audit defense</h2>
+    <div class="doc-list">
+      <div class="doc-item">
+        <div class="check">✓</div>
+        <div class="doc-text">
+          <div class="doc-title">Written compensation analysis</div>
+          <div class="doc-detail">A formal memo each year documenting how the salary was determined, citing the data sources used (RC Reports, Salary.com, BLS, industry surveys).</div>
+        </div>
+      </div>
+      <div class="doc-item">
+        <div class="check">✓</div>
+        <div class="doc-text">
+          <div class="doc-title">Role description &amp; hours log</div>
+          <div class="doc-detail">A clear description of duties performed, percentage of time on each, and total hours devoted to the business per week.</div>
+        </div>
+      </div>
+      <div class="doc-item">
+        <div class="check">✓</div>
+        <div class="doc-text">
+          <div class="doc-title">Salary comparison data</div>
+          <div class="doc-detail">Printouts or PDFs of comparable salaries from at least 2–3 independent sources, dated and saved with the year-end records.</div>
+        </div>
+      </div>
+      <div class="doc-item">
+        <div class="check">✓</div>
+        <div class="doc-text">
+          <div class="doc-title">Board / shareholder minutes</div>
+          <div class="doc-detail">Formal minutes documenting the board's approval of the officer's salary for the year, even for a one-person S-corp.</div>
+        </div>
+      </div>
+      <div class="doc-item">
+        <div class="check">✓</div>
+        <div class="doc-text">
+          <div class="doc-title">Payroll records</div>
+          <div class="doc-detail">W-2s, Form 941 quarterly filings, payroll tax deposits, and gross-to-net pay calculations — actually paid as wages, not just booked.</div>
+        </div>
+      </div>
+      <div class="doc-item">
+        <div class="check">✓</div>
+        <div class="doc-text">
+          <div class="doc-title">Business performance context</div>
+          <div class="doc-detail">P&amp;L statements and KPIs showing what the business produced under the officer's leadership — supports both market and income approaches.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* =========================================================================
+   Reasonable Compensation Estimator — S-Corp Officers
+   Heuristic model for planning purposes only.
+   ========================================================================= */
+
+// Role base salaries — approximate national medians for SMB officer roles
+const ROLE_DATA = {
+  ceo:          { label: 'CEO / President',                       base: 150000 },
+  cfo:          { label: 'CFO / Finance Director',                base: 130000 },
+  ops:          { label: 'Operations Manager',                    base:  90000 },
+  sales:        { label: 'Sales Manager',                         base:  95000 },
+  consultant:   { label: 'Consultant',                            base: 110000 },
+  professional: { label: 'Professional Services (Attorney/CPA)',  base: 140000 },
+  trade:        { label: 'Skilled Trade',                         base:  75000 },
+  other:        { label: 'General Officer',                       base:  85000 },
+};
+
+// Industry multiplier on top of role base
+const INDUSTRY_DATA = {
+  tech:          { label: 'Technology / Software',           mult: 1.15 },
+  finance:       { label: 'Finance / Banking',               mult: 1.10 },
+  professional: { label: 'Legal / Accounting / Consulting',  mult: 1.10 },
+  healthcare:    { label: 'Healthcare / Medical',            mult: 1.05 },
+  realestate:    { label: 'Real Estate',                     mult: 1.05 },
+  manufacturing: { label: 'Manufacturing',                   mult: 1.00 },
+  construction:  { label: 'Construction / Trades',           mult: 1.00 },
+  retail:        { label: 'Retail / Hospitality',            mult: 0.92 },
+  nonprofit:     { label: 'Non-profit / Education',          mult: 0.85 },
+  other:         { label: 'Other',                           mult: 1.00 },
+};
+
+// State cost-of-living factors (approximate; source: BLS regional price parities, simplified)
+const STATE_DATA = {
+  AL:0.88, AK:1.25, AZ:1.05, AR:0.86, CA:1.35, CO:1.10, CT:1.20, DE:1.05,
+  DC:1.30, FL:1.05, GA:0.95, HI:1.40, ID:0.95, IL:1.00, IN:0.90, IA:0.90,
+  KS:0.90, KY:0.88, LA:0.90, ME:1.00, MD:1.15, MA:1.30, MI:0.95, MN:1.05,
+  MS:0.85, MO:0.90, MT:0.95, NE:0.90, NV:1.05, NH:1.10, NJ:1.25, NM:0.92,
+  NY:1.30, NC:0.95, ND:0.93, OH:0.93, OK:0.88, OR:1.10, PA:1.00, RI:1.10,
+  SC:0.92, SD:0.92, TN:0.92, TX:1.00, UT:1.00, VT:1.05, VA:1.05, WA:1.20,
+  WV:0.85, WI:0.95, WY:0.95,
+};
+
+const STATE_NAMES = {
+  AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California',
+  CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District of Columbia',
+  FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois',
+  IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana',
+  ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota',
+  MS:'Mississippi', MO:'Missouri', MT:'Montana', NE:'Nebraska', NV:'Nevada',
+  NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NY:'New York',
+  NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OK:'Oklahoma', OR:'Oregon',
+  PA:'Pennsylvania', RI:'Rhode Island', SC:'South Carolina', SD:'South Dakota',
+  TN:'Tennessee', TX:'Texas', UT:'Utah', VT:'Vermont', VA:'Virginia',
+  WA:'Washington', WV:'West Virginia', WI:'Wisconsin', WY:'Wyoming',
+};
+
+const AREA_DATA = {
+  major:   { label: 'Major Metropolitan Area', mult: 1.10 },
+  midsize: { label: 'Mid-Size City',           mult: 1.00 },
+  rural:   { label: 'Small Town / Rural',      mult: 0.92 },
+};
+
+function experienceFactor(years) {
+  if (years < 3)  return { mult: 0.70, label: 'Entry-level (0–2 years)' };
+  if (years < 7)  return { mult: 0.85, label: 'Early-career (3–6 years)' };
+  if (years < 15) return { mult: 1.00, label: 'Mid-career (7–14 years)' };
+  if (years < 25) return { mult: 1.15, label: 'Senior (15–24 years)' };
+  return                  { mult: 1.25, label: 'Veteran (25+ years)' };
+}
+
+function hoursFactor(hours) {
+  // Below 40: pro-rate. 40–50: full-time. 50–60: slight premium. 60+: capped.
+  if (hours <= 0)  return { mult: 0,           label: 'No hours entered' };
+  if (hours < 20)  return { mult: hours / 40,  label: 'Part-time (' + hours + ' hrs/wk)' };
+  if (hours < 40)  return { mult: hours / 40,  label: 'Reduced schedule (' + hours + ' hrs/wk)' };
+  if (hours <= 50) return { mult: 1.00,        label: 'Full-time (' + hours + ' hrs/wk)' };
+  if (hours <= 60) return { mult: 1.05,        label: 'Extended hours (' + hours + ' hrs/wk)' };
+  return                  { mult: 1.10,        label: 'Heavy hours (' + hours + '+ hrs/wk)' };
+}
+
+/* ---------- formatters ---------- */
+const fmt$ = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+const fmtMult = (m) => '×' + m.toFixed(2);
+
+const errorEl = document.getElementById('error');
+
+/* ---------- state dropdown init ---------- */
+function initStateDropdown() {
+  const sel = document.getElementById('state');
+  const codes = Object.keys(STATE_NAMES).sort((a, b) => STATE_NAMES[a].localeCompare(STATE_NAMES[b]));
+  sel.innerHTML = codes.map(c =>
+    '<option value="' + c + '"' + (c === 'TX' ? ' selected' : '') + '>' + STATE_NAMES[c] + '</option>'
+  ).join('');
+}
+
+/* ---------- core calculation ---------- */
+function calculate(input) {
+  const role     = ROLE_DATA[input.role];
+  const industry = INDUSTRY_DATA[input.industry];
+  const stateCOL = STATE_DATA[input.state] || 1.00;
+  const area     = AREA_DATA[input.areaType];
+  const exp      = experienceFactor(input.experience);
+  const hrs      = hoursFactor(input.hours);
+
+  const base = role.base;
+  const step1 = base * industry.mult;            // after industry
+  const step2 = step1 * stateCOL;                // after state COL
+  const step3 = step2 * area.mult;               // after area type
+  const step4 = step3 * exp.mult;                // after experience
+  const median = step4 * hrs.mult;               // after hours
+
+  const low  = median * 0.75;
+  const high = median * 1.30;
+
+  return {
+    role, industry, stateCOL, area, exp, hrs,
+    base, step1, step2, step3, step4, median, low, high,
+    inputs: input,
+  };
+}
+
+/* ---------- render ---------- */
+function setText(id, txt) { const el = document.getElementById(id); if (el) el.textContent = txt; }
+
+function renderStats(r) {
+  setText('lowVal',  fmt$.format(r.low));
+  setText('medVal',  fmt$.format(r.median));
+  setText('highVal', fmt$.format(r.high));
+  setText('medSub',  Math.round((r.median / 50) / 100) * 100 / 50 + ' /yr · ~' + fmt$.format(r.median / 12) + ' /mo');
+  setText('rangeLow',  fmt$.format(r.low));
+  setText('rangeHigh', fmt$.format(r.high));
+}
+
+function renderFactors(r) {
+  const body = document.getElementById('factors-body');
+  const rows = [];
+
+  const row = (label, note, mult, running) =>
+    '<tr><td>' + label +
+      (note ? '<div class="factor-note">' + note + '</div>' : '') +
+    '</td><td>' + (mult !== null ? fmtMult(mult) : '—') +
+    '</td><td>' + fmt$.format(running) + '</td></tr>';
+
+  rows.push(row('Role base salary',
+    r.role.label + ' — national SMB median', null, r.base));
+  rows.push(row('Industry adjustment',
+    r.industry.label, r.industry.mult, r.step1));
+  rows.push(row('State cost-of-living',
+    STATE_NAMES[r.inputs.state] + ' (BLS RPP proxy)', r.stateCOL, r.step2));
+  rows.push(row('Area type',
+    r.area.label, r.area.mult, r.step3));
+  rows.push(row('Experience',
+    r.exp.label, r.exp.mult, r.step4));
+  rows.push(row('Hours devoted',
+    r.hrs.label, r.hrs.mult, r.median));
+  rows.push('<tr class="result"><td>Median reasonable compensation</td><td>—</td><td>' + fmt$.format(r.median) + '</td></tr>');
+
+  body.innerHTML = rows.join('');
+}
+
+function renderDriver(r) {
+  const factors = [
+    { name: 'industry',   mult: r.industry.mult,   label: r.industry.label,  direction: r.industry.mult > 1 ? 'up' : (r.industry.mult < 1 ? 'down' : 'neutral') },
+    { name: 'state',      mult: r.stateCOL,        label: STATE_NAMES[r.inputs.state] + ' cost of living', direction: r.stateCOL > 1.05 ? 'up' : (r.stateCOL < 0.95 ? 'down' : 'neutral') },
+    { name: 'area',       mult: r.area.mult,       label: r.area.label,      direction: r.area.mult > 1 ? 'up' : (r.area.mult < 1 ? 'down' : 'neutral') },
+    { name: 'experience', mult: r.exp.mult,        label: r.exp.label,       direction: r.exp.mult > 1 ? 'up' : (r.exp.mult < 1 ? 'down' : 'neutral') },
+    { name: 'hours',      mult: r.hrs.mult,        label: r.hrs.label,       direction: r.hrs.mult > 1 ? 'up' : (r.hrs.mult < 1 ? 'down' : 'neutral') },
+  ];
+
+  const pushers = factors.filter(f => f.direction === 'up').sort((a, b) => b.mult - a.mult).slice(0, 2);
+  const pullers = factors.filter(f => f.direction === 'down').sort((a, b) => a.mult - b.mult).slice(0, 2);
+
+  let html = '<strong>What drove this range:</strong> ';
+  const pieces = [];
+  if (pushers.length) pieces.push('Pushed higher by ' + pushers.map(p => p.label).join(' and '));
+  if (pullers.length) pieces.push('pulled lower by ' + pullers.map(p => p.label).join(' and '));
+  if (pieces.length === 0) pieces.push('All factors near the national average for this role');
+
+  html += pieces.join('; ') + '. ';
+  html += 'The recommended median assumes you are devoting ' + r.inputs.hours + ' hours per week as the ' +
+          r.role.label.toLowerCase() + ' of a ' + r.industry.label.toLowerCase() + ' business in ' +
+          STATE_NAMES[r.inputs.state] + '.';
+
+  document.getElementById('driverInsight').innerHTML = html;
+}
+
+/* ---------- run ---------- */
+function showError(msg) { errorEl.textContent = msg; errorEl.classList.add('show'); }
+function clearError() { errorEl.textContent = ''; errorEl.classList.remove('show'); }
+
+function calculateAll() {
+  try {
+    clearError();
+    const input = {
+      role:       document.getElementById('role').value,
+      industry:   document.getElementById('industry').value,
+      state:      document.getElementById('state').value,
+      areaType:   document.getElementById('areaType').value,
+      experience: parseInt(document.getElementById('experience').value, 10) || 0,
+      hours:      parseInt(document.getElementById('hours').value, 10) || 0,
+    };
+
+    if (input.experience < 0 || input.experience > 60)
+      throw new Error('Years of experience must be between 0 and 60.');
+    if (input.hours < 0 || input.hours > 80)
+      throw new Error('Hours per week must be between 0 and 80.');
+    if (input.hours === 0)
+      throw new Error('Enter at least 1 hour per week.');
+
+    const r = calculate(input);
+    renderStats(r);
+    renderFactors(r);
+    renderDriver(r);
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+function reset() {
+  document.getElementById('role').value = 'ceo';
+  document.getElementById('industry').value = 'manufacturing';
+  document.getElementById('state').value = 'TX';
+  document.getElementById('areaType').value = 'midsize';
+  document.getElementById('locationLabel').value = '';
+  document.getElementById('experience').value = 10;
+  document.getElementById('hours').value = 40;
+  calculateAll();
+}
+
+/* ---------- listeners ---------- */
+document.getElementById('calc-btn').addEventListener('click', calculateAll);
+document.getElementById('reset-btn').addEventListener('click', reset);
+
+['role', 'industry', 'state', 'areaType', 'experience', 'hours'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('change', calculateAll);
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') calculateAll(); });
+});
+
+/* ---------- init ---------- */
+initStateDropdown();
+calculateAll();
+</script>
+</body>
+</html>
