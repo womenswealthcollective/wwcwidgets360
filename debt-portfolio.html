@@ -13,6 +13,10 @@
     --brand-tint-strong: #DDE3CC;
     --accent: #6B7A52;
 
+    --coral: #E5A89A;
+    --coral-dark: #C98778;
+    --coral-soft: #FBEEEA;
+
     --bg: #F8F7F1;
     --surface: #ffffff;
     --text: #2C2E26;
@@ -191,13 +195,14 @@
   }
   button.btn {
     padding: 12px 22px;
-    background: var(--brand); color: #fff;
+    background: var(--coral); color: var(--text);
     border: none; border-radius: var(--radius-sm);
     font-size: 14px; font-weight: 600;
     cursor: pointer; letter-spacing: 0.02em;
-    transition: background 0.15s, transform 0.05s;
+    transition: background 0.15s, transform 0.05s, color 0.15s;
+    box-shadow: 0 2px 6px rgba(229, 168, 154, 0.30);
   }
-  button.btn:hover { background: var(--brand-dark); }
+  button.btn:hover { background: var(--coral-dark); color: #fff; }
   button.btn:active { transform: scale(0.99); }
   button.btn.ghost {
     background: transparent; color: var(--brand-darker);

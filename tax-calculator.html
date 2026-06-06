@@ -21,6 +21,10 @@
     --accent: #5E6849;
     --soft: #F1EFE7;
 
+    --coral: #E5A89A;
+    --coral-dark: #C98778;
+    --coral-soft: #FBEEEA;
+
     --shadow-sm: 0 1px 2px rgba(46,50,35,0.05), 0 1px 3px rgba(46,50,35,0.06);
     --shadow-md: 0 4px 10px rgba(46,50,35,0.05), 0 14px 30px rgba(46,50,35,0.08);
     --radius: 16px;
@@ -224,17 +228,18 @@
   }
   button.btn {
     padding: 12px 22px;
-    background: var(--primary);
-    color: #fff;
+    background: var(--coral);
+    color: var(--text);
     border: none;
     border-radius: var(--radius-sm);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     letter-spacing: 0.02em;
-    transition: background 0.15s, transform 0.05s;
+    transition: background 0.15s, transform 0.05s, color 0.15s;
+    box-shadow: 0 2px 6px rgba(229, 168, 154, 0.30);
   }
-  button.btn:hover { background: var(--primary-dark); }
+  button.btn:hover { background: var(--coral-dark); color: #fff; }
   button.btn:active { transform: scale(0.99); }
   button.btn.ghost {
     background: transparent;
